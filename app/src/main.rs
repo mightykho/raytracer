@@ -1,51 +1,26 @@
 extern crate raytracer;
+extern crate serde;
+extern crate serde_json;
 extern crate image;
 
-use raytracer::scene::Scene;
-use raytracer::point::Point;
-use raytracer::geometry::Sphere;
-use raytracer::color::Color;
+#[macro_use]
+extern crate clap;
+
+use std::fs::File;
+use clap::App;
 
 fn main() {
-    let scene = build_scene();
+    let yaml = load_yaml!("cli.yml");
+    let matches = App::from_yaml(yaml).get_matches();
+
+    let scene_path = matches.value_of("scene").unwrap();
+    let scene_file = File::open(scene_path).expect("File not found");
+
+    let image_path = matches.value_of("output").unwrap();
+
+    let scene = serde_json::from_reader(scene_file).unwrap();
+
     let img = raytracer::render(&scene);
 
-    img.save("test.png").unwrap();
-}
-
-fn build_scene() -> Scene {
-    let geometry = vec!(
-        Sphere {
-            center: Point {
-                x: 0.0,
-                y: 0.0,
-                z: -4.0,
-            },
-            radius: 2.0,
-            color: Color {
-                r: 250,
-                g: 105,
-                b: 120,
-            },
-        },
-        Sphere {
-            center: Point {
-                x: 1.0,
-                y: 0.0,
-                z: -2.0,
-            },
-            radius: 1.0,
-            color: Color {
-                r: 100,
-                g: 255,
-                b: 180,
-            },
-        });
-
-    Scene {
-        width: 800,
-        height: 600,
-        fov: 90.0,
-        geometry: geometry
-    }
+    img.save(image_path).unwrap();
 }

@@ -1,0 +1,15 @@
+name: Raytracer
+version: "0.1"
+author: Stepan K. <mightykho.dev@gmail.com>
+about: Simple raytrace renderer
+args:
+    - scene:
+        index: 1
+        value_name: SCENE_JSON
+        help: Parses scene from json file
+        required: true
+    - output:
+        index: 2
+        value_name: OUTPUT_IMAGE
+        help: Sets the output image file
+        required: true

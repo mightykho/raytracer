@@ -1,34 +1,27 @@
-use point::Point;
-use vector::Vector3;
+use vector::{Vector3, Point};
 use scene::Scene;
 
+#[derive(Debug)]
 pub struct Ray {
     pub origin: Point,
     pub direction: Vector3,
 }
 
 impl Ray {
-    pub fn create_prime(x: u32, y: u32, scene: &Scene) -> Ray {
+    pub fn create_prime(x: f64, y: f64, scene: &Scene) -> Ray {
         assert!(scene.width > scene.height);
 
         let aspect_ratio = scene.width as f64 / scene.height as f64;
-        let fov_adjustment = (scene.fov.to_radians() / 2.0).tan();
+        let fov_adjustment = (scene.camera.fov.to_radians() / 2.0).tan();
 
-        // sensor goes through the pixel center
-        let pixel_center_x = x as f64 + 0.5;
-        let pixel_center_y = y as f64 + 0.5;
+        let sensor_x = 2.0 * x as f64 / scene.width as f64 - 1.0;
+        let sensor_y = 1.0 - 2.0 * y as f64 / scene.height as f64;
 
-        // sensor coordinate is in range (-1.0...1.0)
-        let sensor_x = 2.0 * pixel_center_x / scene.width as f64 - 1.0;
-        let sensor_y = 1.0 - 2.0 * pixel_center_y / scene.height as f64;
+        let direction = Vector3::new(sensor_x * aspect_ratio * fov_adjustment, sensor_y * fov_adjustment, -1.0);
 
         Ray {
-            origin: Point::zero(),
-            direction: Vector3 {
-                x: sensor_x * aspect_ratio * fov_adjustment,
-                y: sensor_y * fov_adjustment,
-                z: -1.0,
-            }.normalize(),
+            origin: scene.camera.position.clone(),
+            direction: direction.normalize()
         }
     }
 }

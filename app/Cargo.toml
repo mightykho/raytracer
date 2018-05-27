@@ -5,4 +5,8 @@ authors = ["Stepan Khodzhaian <mightykho.dev@gmail.com>"]
 
 [dependencies]
 raytracer = { path = ".." }
+clap = {version = "~2.27.0", features = ["yaml"]}
 image = "*"
+serde = "1.0"
+serde_derive = "1.0"
+serde_json = "1.0"

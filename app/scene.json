@@ -1,0 +1,188 @@
+{
+  "width": 800,
+  "height": 600,
+  "camera": {
+    "fov": 60.0,
+    "samples": 100,
+    "diffuse": 2,
+    "position": {
+      "x": 0.0,
+      "y": 2.0,
+      "z": 6.0
+    }
+  },
+  "geometry": [
+    {
+      "Sphere" : {
+        "center": {
+          "x": 0.0,
+          "y": -1.0,
+          "z": -11.0
+        },
+        "material": {
+          "MetallicMaterial": {
+            "fizziness": 0.05
+          }
+        },
+        "radius": 1.0
+      }
+    },
+    {
+      "Sphere" : {
+        "center": {
+          "x": -5.0,
+          "y": 0.0,
+          "z": -8.0
+        },
+        "material": {
+          "DiffuseMaterial" : {
+            "albedo": 0.96,
+            "color": {
+              "Texture": "textures/tex.jpg"
+            }
+          }
+        },
+        "radius": 2.0
+      }
+    },
+    {
+      "Sphere": {
+        "center": {
+          "x": 5.0,
+          "y": 0.25,
+          "z": -6.0
+        },
+        "radius": 2.25
+      }
+    },
+    {
+      "Plane": {
+        "origin": {
+          "x": 0.0,
+          "y": -2.0,
+          "z": 0.0
+        },
+        "material": {
+          "DiffuseMaterial": {
+            "color": {
+              "Color": {
+                "r": 1.0,
+                "g": 1.0,
+                "b": 1.0
+              }
+            },
+            "albedo": 0.08
+          }
+        },
+        "normal": {
+          "x": 0.0,
+          "y": -1.0,
+          "z": 0.0
+        }
+      }
+    },
+    {
+      "Plane": {
+        "origin": {
+          "x": 8.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "material": {
+          "DiffuseMaterial": {
+            "color": {
+              "Color": {
+                "r": 0.3,
+                "g": 1.0,
+                "b": 0.3
+              }
+            },
+            "albedo": 0.7
+          }
+        },
+        "normal": {
+          "x": 1.0,
+          "y": 0.0,
+          "z": 0.0
+        }
+      }
+    },
+    {
+      "Plane": {
+        "origin": {
+          "x": -8.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "material": {
+          "DiffuseMaterial": {
+            "color": {
+              "Color": {
+                "r": 1.0,
+                "g": 0.3,
+                "b": 0.3
+              }
+            },
+            "albedo": 0.7
+          }
+        },
+        "normal": {
+          "x": -1.0,
+          "y": 0.0,
+          "z": 0.0
+        }
+      }
+    },
+    {
+      "Plane": {
+        "origin": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": -16.0
+        },
+        "normal": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": -1.0
+        }
+      }
+    },
+    {
+      "Plane": {
+        "origin": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 2.0
+        },
+        "normal": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 1.0
+        }
+      }
+    }
+  ],
+  "lights": [
+    {
+      "DirectionalLight": {
+        "direction": {
+          "x": 0.0,
+          "y": -1.0,
+          "z": -1.0
+        },
+        "intensity": 0.5,
+        "cast_shadow": false
+      }
+    },
+    {
+      "SphericalLight": {
+        "position": {
+          "x": 0.0,
+          "y": 8.0,
+          "z": -8.0
+        },
+        "intensity": 4000.0
+      }
+    }
+  ]
+}
