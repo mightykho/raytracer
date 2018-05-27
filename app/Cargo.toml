@@ -1,0 +1,8 @@
+[package]
+name = "app"
+version = "0.1.0"
+authors = ["Stepan Khodzhaian <mightykho.dev@gmail.com>"]
+
+[dependencies]
+raytracer = { path = ".." }
+image = "*"
