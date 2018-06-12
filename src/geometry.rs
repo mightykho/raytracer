@@ -116,11 +116,6 @@ impl Intersectable for Sphere {
         let l: Vector3 = self.center.subtract(&ray.origin);
         let l_norm = l.norm();
 
-        if l_norm > 100000.0 {
-            // ignore very far distances
-            return None;
-        }
-
         // find length of projection of l on direction vector
         let adj = l.dot(&ray.direction.normalize());
 

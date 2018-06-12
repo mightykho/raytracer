@@ -1,0 +1,100 @@
+{
+  "width": 1600,
+  "height": 1200,
+  "camera": {
+    "fov": 60.0,
+    "samples": 1000,
+    "diffuse": 4,
+    "position": {
+      "x": 0.0,
+      "y": 4.0,
+      "z": 2.0
+    }
+  },
+  "geometry": [
+    {
+      "Sphere" : {
+        "center": {
+          "x": 0.0,
+          "y": 2.0,
+          "z": -11.0
+        },
+        "radius": 2.0,
+        "material": {
+          "MetallicMaterial": {
+            "fizziness": 0.01,
+            "color": {
+              "r": 0.96,
+              "g": 0.6,
+              "b": 0.3
+            }
+          }
+        }
+      }
+    },
+    {
+      "Sphere": {
+        "center": {
+          "x": 5.0,
+          "y": 2.0,
+          "z": -13.0
+        },
+        "radius": 2.0,
+        "material": {
+          "DiffuseMaterial": {
+            "color": {
+              "Color": {
+                "r": 0.5,
+                "g": 0.2,
+                "b": 0.6
+              }
+            },
+            "albedo": 0.08
+          }
+        }
+      }
+    },
+    {
+      "Sphere" : {
+        "center": {
+          "x": -5.0,
+          "y": 2.0,
+          "z": -9.0
+        },
+        "radius": 2.0,
+        "material": {
+          "DiffuseMaterial" : {
+            "albedo": 0.08,
+            "color": {
+              "Texture": "textures/tex2.jpg"
+            }
+          }
+        }
+      }
+    },
+    {
+      "Sphere" : {
+        "center": {
+          "x": 0.0,
+          "y": -2000.0,
+          "z": -11.0
+        },
+        "radius": 2000.0,
+        "material": {
+          "DiffuseMaterial": {
+            "color": {
+              "Color": {
+                "r": 0.18,
+                "g": 0.33,
+                "b": 0.05
+              }
+            },
+            "albedo": 0.08
+          }
+        }
+      }
+    }
+  ],
+  "lights": [
+  ]
+}

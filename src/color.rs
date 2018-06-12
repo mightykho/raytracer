@@ -74,6 +74,10 @@ impl Color {
         }
     }
 
+    pub fn lerp(start: &Color, end: &Color, t: f64) -> Color {
+        start.multiply(1.0 - t).add_color(&end.multiply(t))
+    }
+
     pub fn to_rgba(&self) -> Rgba<u8> {
         Rgba::from_channels((gamma_encode(self.r) * 255.0) as u8,
                             (gamma_encode(self.g) * 255.0) as u8,

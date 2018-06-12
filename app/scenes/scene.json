@@ -1,10 +1,10 @@
 {
-  "width": 800,
-  "height": 600,
+  "width": 1600,
+  "height": 1200,
   "camera": {
     "fov": 60.0,
-    "samples": 100,
-    "diffuse": 2,
+    "samples": 1000,
+    "diffuse": 4,
     "position": {
       "x": 0.0,
       "y": 2.0,
@@ -97,7 +97,7 @@
                 "b": 0.3
               }
             },
-            "albedo": 0.7
+            "albedo": 0.4
           }
         },
         "normal": {
@@ -123,7 +123,7 @@
                 "b": 0.3
               }
             },
-            "albedo": 0.7
+            "albedo": 0.4
           }
         },
         "normal": {
@@ -170,7 +170,7 @@
           "y": -1.0,
           "z": -1.0
         },
-        "intensity": 0.5,
+        "intensity": 0.3,
         "cast_shadow": false
       }
     },
@@ -181,7 +181,7 @@
           "y": 8.0,
           "z": -8.0
         },
-        "intensity": 4000.0
+        "intensity": 10000.0
       }
     }
   ]

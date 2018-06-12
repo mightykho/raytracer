@@ -20,7 +20,10 @@ pub struct DiffuseMaterial {
 
 #[derive(Deserialize, Debug)]
 pub struct MetallicMaterial {
-    pub fizziness: f64
+    pub fizziness: f64,
+
+    #[serde(default="Color::white")]
+    pub color: Color
 }
 
 #[derive(Deserialize)]
@@ -43,6 +46,13 @@ impl Default for Material {
 }
 
 impl Material {
+    pub fn diffuse_multiplier_color(&self, texture_coordinate: &Vector2) -> Color {
+        match self {
+            Material::DiffuseMaterial(ref dm) => dm.color_at(texture_coordinate),
+            Material::MetallicMaterial(ref mm) => mm.color.clone()
+        }
+    }
+
     pub fn get_color(&self, texture_coordinate: &Vector2, light_power: f64, light_color: &Color) -> Color {
         match self {
             Material::DiffuseMaterial(ref dm) => dm.get_color(texture_coordinate, light_power, light_color),
@@ -90,6 +100,9 @@ impl DiffuseMaterial {
         normal.add(&Vector3::random_unit())
     }
 
+    pub fn color_at(&self, coords: &Vector2) -> Color {
+        self.color.color_at(&coords)
+    }
 }
 
 impl MetallicMaterial {

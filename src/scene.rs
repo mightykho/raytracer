@@ -26,6 +26,8 @@ impl Scene {
 
     pub fn get_color(&self, ray: &Ray, diffuse_depth: u32) -> Color {
         let mut color = Color::black();
+        let bg_start_color = Color { r: 1.0, g: 1.0 , b: 1.0 };
+        let bg_end_color = Color { r: 0.5, g: 0.7 , b: 1.0 };
 
         match self.trace(ray) {
             Some(intersection) => {
@@ -33,6 +35,11 @@ impl Scene {
                 let material = object.material();
                 let hit_point = ray.origin.add(&ray.direction.multiply(intersection.distance));
                 let surface_normal = object.surface_normal(&hit_point);
+
+                let mut texture_coords = Vector2 { x: 0.0, y: 0.0 };
+                if material.uses_texture() {
+                    texture_coords = object.texture_coords(&hit_point);
+                }
 
                 for light in self.lights.iter() {
                     let direction_to_light = light.direction_vector(&hit_point).normalize().neg();
@@ -53,32 +60,32 @@ impl Scene {
                     let light_intensity = if in_light { light.relative_intensity(&hit_point) } else { 0.0 };
                     let light_power = surface_normal.dot(&direction_to_light).max(0.0) * light_intensity;
 
-                    let mut texture_coords = Vector2 { x: 0.0, y: 0.0 };
-
-                    if material.uses_texture() {
-                        texture_coords = object.texture_coords(&hit_point);
-                    }
-
                     color = color.add_color(
                         &material.get_color(&texture_coords, light_power, &light.color())
                     );
                 }
 
                 if diffuse_depth > 0 {
+                    let diffuse_multiplier_color = material.diffuse_multiplier_color(&texture_coords);
                     let diffuse_vector = material.scatter(&ray.direction, &object.surface_normal(&hit_point));
-
 
                     let diffuse_ray = Ray {
                         origin: hit_point.clone(),
                         direction: diffuse_vector.normalize()
                     };
 
-                    color = color.add_color(&self.get_color(&diffuse_ray, diffuse_depth - 1).multiply(1.0 - material.albedo()));
-                }
+                    let diffuse_color = self.get_color(&diffuse_ray, diffuse_depth - 1).multiply(1.0 - material.albedo());
 
+                    color = color.add_color(
+                        &diffuse_multiplier_color.multiply_color(&diffuse_color)
+                    );
+                }
             },
 
-            None => {}
+            None => {
+                let t = 0.5 * (ray.direction.y + 1.0);
+                color = Color::lerp(&bg_start_color, &bg_end_color, t);
+            }
         }
 
         color
