@@ -62,18 +62,18 @@ impl Scene {
                     color = color.add_color(
                         &material.get_color(&texture_coords, light_power, &light.color())
                     );
+                }
 
-                    if diffuse_depth > 0 {
-                        let diffuse_vector = material.scatter(&ray.direction, &object.surface_normal(&hit_point));
+                if diffuse_depth > 0 {
+                    let diffuse_vector = material.scatter(&ray.direction, &object.surface_normal(&hit_point));
 
 
-                        let diffuse_ray = Ray {
-                            origin: hit_point.clone(),
-                            direction: diffuse_vector.normalize()
-                        };
+                    let diffuse_ray = Ray {
+                        origin: hit_point.clone(),
+                        direction: diffuse_vector.normalize()
+                    };
 
-                        color = color.add_color(&self.get_color(&diffuse_ray, diffuse_depth - 1).multiply(1.0 - material.albedo()));
-                    }
+                    color = color.add_color(&self.get_color(&diffuse_ray, diffuse_depth - 1).multiply(1.0 - material.albedo()));
                 }
 
             },
