@@ -21,13 +21,11 @@
         },
         "radius": 2.0,
         "material": {
-          "MetallicMaterial": {
-            "fizziness": 0.01,
-            "color": {
-              "r": 0.96,
-              "g": 0.6,
-              "b": 0.3
-            }
+          "reflection": 1.0,
+          "reflection_color": {
+            "r": 0.96,
+            "g": 0.6,
+            "b": 0.3
           }
         }
       }
@@ -41,15 +39,12 @@
         },
         "radius": 2.0,
         "material": {
-          "DiffuseMaterial": {
-            "color": {
-              "Color": {
-                "r": 0.5,
-                "g": 0.2,
-                "b": 0.6
-              }
-            },
-            "albedo": 0.08
+          "color": {
+            "Color": {
+              "r": 0.5,
+              "g": 0.2,
+              "b": 0.6
+            }
           }
         }
       }
@@ -63,11 +58,10 @@
         },
         "radius": 2.0,
         "material": {
-          "DiffuseMaterial" : {
-            "albedo": 0.08,
-            "color": {
-              "Texture": "textures/tex2.jpg"
-            }
+          "reflection": 0.2,
+          "fizziness": 0.1,
+          "color": {
+            "Texture": "textures/tex2.jpg"
           }
         }
       }
@@ -81,16 +75,15 @@
         },
         "radius": 2000.0,
         "material": {
-          "DiffuseMaterial": {
-            "color": {
-              "Color": {
-                "r": 0.18,
-                "g": 0.33,
-                "b": 0.05
-              }
-            },
-            "albedo": 0.08
-          }
+          "color": {
+            "Color": {
+              "r": 0.18,
+              "g": 0.33,
+              "b": 0.05
+            }
+          },
+          "reflection": 0.1,
+          "fizziness": 0.2
         }
       }
     }

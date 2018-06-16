@@ -20,9 +20,8 @@
           "z": -11.0
         },
         "material": {
-          "MetallicMaterial": {
-            "fizziness": 0.05
-          }
+          "reflection": 1.0,
+          "fizziness": 0.05
         },
         "radius": 1.0
       }
@@ -35,11 +34,9 @@
           "z": -8.0
         },
         "material": {
-          "DiffuseMaterial" : {
-            "albedo": 0.96,
-            "color": {
-              "Texture": "textures/tex.jpg"
-            }
+          "albedo": 0.96,
+          "color": {
+            "Texture": "textures/tex.jpg"
           }
         },
         "radius": 2.0
@@ -63,16 +60,16 @@
           "z": 0.0
         },
         "material": {
-          "DiffuseMaterial": {
-            "color": {
-              "Color": {
-                "r": 1.0,
-                "g": 1.0,
-                "b": 1.0
-              }
-            },
-            "albedo": 0.08
-          }
+          "reflection": 0.1,
+          "fizziness": 0.05,
+          "color": {
+            "Color": {
+              "r": 1.0,
+              "g": 1.0,
+              "b": 1.0
+            }
+          },
+          "albedo": 0.08
         },
         "normal": {
           "x": 0.0,
@@ -89,16 +86,16 @@
           "z": 0.0
         },
         "material": {
-          "DiffuseMaterial": {
-            "color": {
-              "Color": {
-                "r": 0.3,
-                "g": 1.0,
-                "b": 0.3
-              }
-            },
-            "albedo": 0.4
-          }
+          "reflection": 0.3,
+          "fizziness": 0.2,
+          "color": {
+            "Color": {
+              "r": 0.3,
+              "g": 1.0,
+              "b": 0.3
+            }
+          },
+          "albedo": 0.4
         },
         "normal": {
           "x": 1.0,
@@ -115,16 +112,16 @@
           "z": 0.0
         },
         "material": {
-          "DiffuseMaterial": {
-            "color": {
-              "Color": {
-                "r": 1.0,
-                "g": 0.3,
-                "b": 0.3
-              }
-            },
-            "albedo": 0.4
-          }
+          "reflection": 0.3,
+          "fizziness": 0.2,
+          "color": {
+            "Color": {
+              "r": 1.0,
+              "g": 0.3,
+              "b": 0.3
+            }
+          },
+          "albedo": 0.4
         },
         "normal": {
           "x": -1.0,
@@ -139,6 +136,10 @@
           "x": 0.0,
           "y": 0.0,
           "z": -16.0
+        },
+        "material": {
+          "reflection": 0.1,
+          "fizziness": 0.05
         },
         "normal": {
           "x": 0.0,
@@ -170,7 +171,7 @@
           "y": -1.0,
           "z": -1.0
         },
-        "intensity": 0.3,
+        "intensity": 0.4,
         "cast_shadow": false
       }
     },
@@ -181,7 +182,7 @@
           "y": 8.0,
           "z": -8.0
         },
-        "intensity": 10000.0
+        "intensity": 8000.0
       }
     }
   ]

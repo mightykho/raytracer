@@ -5,6 +5,7 @@ use intersection::Intersection;
 use ray::Ray;
 use color::Color;
 use camera::Camera;
+use rand::prelude::*;
 
 #[derive(Deserialize, Debug)]
 pub struct Scene {
@@ -26,6 +27,7 @@ impl Scene {
 
     pub fn get_color(&self, ray: &Ray, diffuse_depth: u32) -> Color {
         let mut color = Color::black();
+        let mut rng = thread_rng();
         let bg_start_color = Color { r: 1.0, g: 1.0 , b: 1.0 };
         let bg_end_color = Color { r: 0.5, g: 0.7 , b: 1.0 };
 
@@ -66,15 +68,16 @@ impl Scene {
                 }
 
                 if diffuse_depth > 0 {
-                    let diffuse_multiplier_color = material.diffuse_multiplier_color(&texture_coords);
-                    let diffuse_vector = material.scatter(&ray.direction, &object.surface_normal(&hit_point));
+                    let rand = rng.gen();
+                    let diffuse_multiplier_color = material.diffuse_color(rand, &texture_coords);
+                    let diffuse_vector = material.scatter(rand, &ray.direction, &object.surface_normal(&hit_point));
 
                     let diffuse_ray = Ray {
                         origin: hit_point.clone(),
                         direction: diffuse_vector.normalize()
                     };
 
-                    let diffuse_color = self.get_color(&diffuse_ray, diffuse_depth - 1).multiply(1.0 - material.albedo());
+                    let diffuse_color = self.get_color(&diffuse_ray, diffuse_depth - 1).multiply(1.0 - material.albedo);
 
                     color = color.add_color(
                         &diffuse_multiplier_color.multiply_color(&diffuse_color)

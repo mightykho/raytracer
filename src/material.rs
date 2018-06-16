@@ -7,23 +7,17 @@ use std::fmt;
 use std::path::PathBuf;
 
 #[derive(Deserialize, Debug)]
-pub enum Material {
-    DiffuseMaterial(DiffuseMaterial),
-    MetallicMaterial(MetallicMaterial)
-}
-
-#[derive(Deserialize, Debug)]
-pub struct DiffuseMaterial {
+pub struct Material {
+    #[serde(default="Material::default_color")]
     pub color: Coloration,
-    pub albedo: f64
-}
-
-#[derive(Deserialize, Debug)]
-pub struct MetallicMaterial {
+    #[serde(default="Material::default_reflection")]
+    pub reflection: f64,
+    #[serde(default="Material::default_reflection_color")]
+    pub reflection_color: Color,
+    #[serde(default="Material::default_fizziness")]
     pub fizziness: f64,
-
-    #[serde(default="Color::white")]
-    pub color: Color
+    #[serde(default="Material::default_albedo")]
+    pub albedo: f64
 }
 
 #[derive(Deserialize)]
@@ -34,55 +28,32 @@ pub enum Coloration {
         DynamicImage)
 }
 
+enum RayBehavior {
+    Diffuse,
+    Reflect,
+    Refract
+}
+
 impl Default for Material {
-    fn default() -> Material {
-        Material::DiffuseMaterial(
-            DiffuseMaterial {
-                color: Coloration::Color(Color::white()),
-                albedo: 0.1,
-            }
-        )
+    fn default() -> Self {
+
+        Self {
+            color: Self::default_color(),
+            fizziness: Self::default_fizziness(),
+            reflection: Self::default_reflection(),
+            reflection_color: Self::default_reflection_color(),
+            albedo: Self::default_albedo()
+        }
     }
 }
 
 impl Material {
-    pub fn diffuse_multiplier_color(&self, texture_coordinate: &Vector2) -> Color {
-        match self {
-            Material::DiffuseMaterial(ref dm) => dm.color_at(texture_coordinate),
-            Material::MetallicMaterial(ref mm) => mm.color.clone()
-        }
-    }
+    fn default_color() -> Coloration { Coloration::Color(Color::white()) }
+    fn default_fizziness() -> f64 { 0.01 }
+    fn default_reflection() -> f64 { 0.0 }
+    fn default_reflection_color() -> Color { Color::white() }
+    fn default_albedo() -> f64 { 0.08 }
 
-    pub fn get_color(&self, texture_coordinate: &Vector2, light_power: f64, light_color: &Color) -> Color {
-        match self {
-            Material::DiffuseMaterial(ref dm) => dm.get_color(texture_coordinate, light_power, light_color),
-            Material::MetallicMaterial(ref _mm) => Color::black()
-        }
-    }
-
-    pub fn uses_texture(&self) -> bool {
-        match self {
-            Material::DiffuseMaterial(ref dm) => dm.uses_texture(),
-            Material::MetallicMaterial(ref _mm) => false
-        }
-    }
-
-    pub fn albedo(&self) -> f64 {
-        match self {
-            Material::DiffuseMaterial(ref dm) => dm.albedo,
-            Material::MetallicMaterial(ref _mm) => 0.0
-        }
-    }
-
-    pub fn scatter(&self, vec: &Vector3, normal: &Vector3) -> Vector3 {
-        match self {
-            Material::DiffuseMaterial(ref dm) => dm.scatter(vec, normal),
-            Material::MetallicMaterial(ref mm) => mm.scatter(vec, normal)
-        }
-    }
-}
-
-impl DiffuseMaterial {
     pub fn get_color(&self, texture_coordinate: &Vector2, light_power: f64, light_color: &Color) -> Color {
         let light_reflected = self.albedo / ::std::f64::consts::PI;
 
@@ -96,18 +67,36 @@ impl DiffuseMaterial {
         }
     }
 
-    pub fn scatter(&self, _vec: &Vector3, normal: &Vector3) -> Vector3 {
-        normal.add(&Vector3::random_unit())
+    pub fn scatter(&self, rand: f64, vec: &Vector3, normal: &Vector3) -> Vector3 {
+        match self.detect_behavior(rand) {
+            RayBehavior::Diffuse => normal.add(&Vector3::random_unit()),
+            RayBehavior::Reflect => {
+                vec.reflect(normal).add(&Vector3::random_unit().multiply(self.fizziness))
+            },
+            RayBehavior::Refract => Vector3::zero()
+        }
+    }
+
+    pub fn diffuse_color(&self, rand: f64, texture_coordinate: &Vector2) -> Color {
+        match self.detect_behavior(rand) {
+            RayBehavior::Diffuse => self.color_at(texture_coordinate),
+            RayBehavior::Reflect => self.reflection_color.clone(),
+            RayBehavior::Refract => Color::white()
+        }
     }
 
     pub fn color_at(&self, coords: &Vector2) -> Color {
         self.color.color_at(&coords)
     }
-}
 
-impl MetallicMaterial {
-    pub fn scatter(&self, vec: &Vector3, normal: &Vector3) -> Vector3 {
-        vec.reflect(normal).add(&Vector3::random_unit().multiply(self.fizziness))
+    fn detect_behavior(&self, rand: f64) -> RayBehavior {
+        if rand < self.reflection {
+            RayBehavior::Reflect
+        // } else if 1 - rand < self.refraction {
+        //     RayBehavior::Refract
+        } else {
+            RayBehavior::Diffuse
+        }
     }
 }
 
