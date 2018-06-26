@@ -21,7 +21,7 @@ It's heavily inspired by
 * **Diffuse iterations:** 4
 * **Light sources:** 0
 * **Processor:** 2.9 GHz Intel Core i7
-* **Render Time:** 106 seconds
+* **Render Time:** 186 seconds
 
 ![Render result](https://raw.githubusercontent.com/mightykho/raytracer/master/app/out2.png)
 

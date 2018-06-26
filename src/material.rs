@@ -5,6 +5,7 @@ use color::Color;
 use vector::{Vector2, Vector3};
 use std::fmt;
 use std::path::PathBuf;
+use rand::prelude::*;
 
 #[derive(Deserialize, Debug)]
 pub struct Material {
@@ -17,7 +18,13 @@ pub struct Material {
     #[serde(default="Material::default_fizziness")]
     pub fizziness: f64,
     #[serde(default="Material::default_albedo")]
-    pub albedo: f64
+    pub albedo: f64,
+    #[serde(default="Material::default_opacity")]
+    pub opacity: f64,
+    #[serde(default="Material::default_refraction_index")]
+    pub refraction_index: f64,
+    #[serde(default="Material::default_refraction_color")]
+    pub refraction_color: Color
 }
 
 #[derive(Deserialize)]
@@ -28,7 +35,7 @@ pub enum Coloration {
         DynamicImage)
 }
 
-enum RayBehavior {
+pub enum RayBehavior {
     Diffuse,
     Reflect,
     Refract
@@ -42,7 +49,10 @@ impl Default for Material {
             fizziness: Self::default_fizziness(),
             reflection: Self::default_reflection(),
             reflection_color: Self::default_reflection_color(),
-            albedo: Self::default_albedo()
+            albedo: Self::default_albedo(),
+            opacity: Self::default_opacity(),
+            refraction_index: Self::default_refraction_index(),
+            refraction_color: Self::default_refraction_color()
         }
     }
 }
@@ -53,12 +63,9 @@ impl Material {
     fn default_reflection() -> f64 { 0.0 }
     fn default_reflection_color() -> Color { Color::white() }
     fn default_albedo() -> f64 { 0.08 }
-
-    pub fn get_color(&self, texture_coordinate: &Vector2, light_power: f64, light_color: &Color) -> Color {
-        let light_reflected = self.albedo / ::std::f64::consts::PI;
-
-        self.color.color_at(texture_coordinate).multiply_color(&light_color).multiply(light_power * light_reflected)
-    }
+    fn default_opacity() -> f64 { 1.0 }
+    fn default_refraction_index() -> f64 { 1.5 }
+    fn default_refraction_color() -> Color { Color::white() }
 
     pub fn uses_texture(&self) -> bool {
         match self.color {
@@ -67,21 +74,67 @@ impl Material {
         }
     }
 
-    pub fn scatter(&self, rand: f64, vec: &Vector3, normal: &Vector3) -> Vector3 {
-        match self.detect_behavior(rand) {
-            RayBehavior::Diffuse => normal.add(&Vector3::random_unit()),
-            RayBehavior::Reflect => {
-                vec.reflect(normal).add(&Vector3::random_unit().multiply(self.fizziness))
-            },
-            RayBehavior::Refract => Vector3::zero()
+    pub fn scatter(&self, vec: &Vector3, normal: &Vector3, texture_coords: &Vector2) -> (Vector3, Color) {
+        let mut rng = thread_rng();
+        let rand: f64 = rng.gen();
+        let mut behavior = RayBehavior::Diffuse;
+        let mut output_vec = Vector3::zero();
+
+        if rand > self.opacity {
+            let rand: f64 = rng.gen();
+            let vec_and_behavior = self.try_refraction(rand, vec, normal);
+
+            output_vec = vec_and_behavior.0;
+            behavior = vec_and_behavior.1;
+        } else if rand < self.reflection {
+            output_vec = self.reflect(vec, normal);
+            behavior = RayBehavior::Reflect;
+        } else {
+            output_vec = normal.add(&Vector3::random_unit());
+            behavior = RayBehavior::Diffuse;
+        }
+
+        (output_vec, self.diffuse_color(behavior, texture_coords))
+    }
+
+    fn schlick(&self, cosine: f64) -> f64 {
+        let r = (1.0 - self.refraction_index) / (1.0 + self.refraction_index);
+        let r2 = r * r;
+
+        r2 + (1.0 - r2) * (1.0 - cosine).powi(5)
+    }
+
+    fn try_refraction(&self, rand: f64, vec: &Vector3, normal: &Vector3) -> (Vector3, RayBehavior) {
+        let mut outward_normal;
+        let mut cosine = -vec.dot(&normal) / vec.magnitude();
+        let mut ni_over_nt = self.refraction_index;
+
+        if vec.dot(&normal) > 0.0 {
+            outward_normal = normal.neg();
+            cosine = self.refraction_index * cosine;
+        } else {
+            outward_normal = normal.clone();
+            ni_over_nt = 1.0 / ni_over_nt;
+        }
+
+        let reflection_prob = self.schlick(cosine);
+
+        if reflection_prob > rand {
+            return (self.reflect(vec, normal), RayBehavior::Reflect)
+        }
+
+        if let Some(refracted) = self.refract(vec, &outward_normal, ni_over_nt) {
+            (refracted, RayBehavior::Refract)
+        } else {
+            (self.reflect(vec, normal), RayBehavior::Reflect)
         }
     }
 
-    pub fn diffuse_color(&self, rand: f64, texture_coordinate: &Vector2) -> Color {
-        match self.detect_behavior(rand) {
+    pub fn diffuse_color(&self, behavior: RayBehavior, texture_coordinate: &Vector2) -> Color {
+        match behavior {
             RayBehavior::Diffuse => self.color_at(texture_coordinate),
             RayBehavior::Reflect => self.reflection_color.clone(),
-            RayBehavior::Refract => Color::white()
+            RayBehavior::Refract => self.refraction_color.clone()
         }
     }
 
@@ -89,14 +142,20 @@ impl Material {
         self.color.color_at(&coords)
     }
 
-    fn detect_behavior(&self, rand: f64) -> RayBehavior {
-        if rand < self.reflection {
-            RayBehavior::Reflect
-        // } else if 1 - rand < self.refraction {
-        //     RayBehavior::Refract
+    fn refract(&self, vec: &Vector3, normal: &Vector3, ni_over_nt: f64) -> Option<Vector3> {
+        let vec = vec.normalize();
+        let dt = vec.dot(normal);
+        let disc = 1.0 - ni_over_nt * ni_over_nt * (1.0 - dt * dt);
+
+        if disc > 0.0 {
+            Some(vec.subtract(&normal.multiply(dt)).multiply(ni_over_nt).subtract(&normal.multiply(disc.sqrt())))
         } else {
-            RayBehavior::Diffuse
+            None
         }
+    }
+
+    fn reflect(&self, vec: &Vector3, normal: &Vector3) -> Vector3 {
+        vec.reflect(normal).add(&Vector3::random_unit().multiply(self.fizziness))
     }
 }
 

@@ -1,10 +1,10 @@
 {
-  "width": 1600,
-  "height": 1200,
+  "width": 800,
+  "height": 600,
   "camera": {
     "fov": 60.0,
-    "samples": 1000,
-    "diffuse": 4,
+    "samples": 100,
+    "diffuse": 3,
     "position": {
       "x": 0.0,
       "y": 2.0,
@@ -49,7 +49,12 @@
           "y": 0.25,
           "z": -6.0
         },
-        "radius": 2.25
+        "radius": 2.25,
+        "material": {
+          "opacity": 0.0,
+          "refraction_index": 2,
+          "reflection": 0.2
+        }
       }
     },
     {

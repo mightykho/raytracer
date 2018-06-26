@@ -6,7 +6,7 @@
     "samples": 1000,
     "diffuse": 4,
     "position": {
-      "x": 0.0,
+      "x": -1.0,
       "y": 4.0,
       "z": 2.0
     }
@@ -15,9 +15,24 @@
     {
       "Sphere" : {
         "center": {
+          "x": 8.0,
+          "y": 9.0,
+          "z": -30.0
+        },
+        "radius": 9.0,
+        "material": {
+          "opacity": 0.0,
+          "reflection": 0.0,
+          "refraction_index": 1.6
+        }
+      }
+    },
+    {
+      "Sphere" : {
+        "center": {
           "x": 0.0,
           "y": 2.0,
-          "z": -11.0
+          "z": -9.0
         },
         "radius": 2.0,
         "material": {
@@ -35,7 +50,7 @@
         "center": {
           "x": 5.0,
           "y": 2.0,
-          "z": -13.0
+          "z": -11.0
         },
         "radius": 2.0,
         "material": {
@@ -54,7 +69,7 @@
         "center": {
           "x": -5.0,
           "y": 2.0,
-          "z": -9.0
+          "z": -7.0
         },
         "radius": 2.0,
         "material": {
@@ -67,22 +82,22 @@
       }
     },
     {
-      "Sphere" : {
-        "center": {
+      "Plane" : {
+        "origin": {
           "x": 0.0,
-          "y": -2000.0,
-          "z": -11.0
+          "y": 0.0,
+          "z": 0.0
         },
-        "radius": 2000.0,
+        "normal": {
+          "x": 0.0,
+          "y": -1.0,
+          "z": 0.0
+        },
         "material": {
           "color": {
-            "Color": {
-              "r": 0.18,
-              "g": 0.33,
-              "b": 0.05
-            }
+            "Texture": "textures/tex3.jpg"
           },
-          "reflection": 0.1,
+          "reflection": 0.2,
           "fizziness": 0.2
         }
       }
